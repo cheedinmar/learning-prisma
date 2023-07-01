@@ -16,23 +16,43 @@ datasource db {
 // each field in a model have 4 parts, the name and type is compulsory
 // eg email String,  optionally you can have a field modifier and you can have attributes
 model User {
-  id          Int     @id @default(autoincrement())
-  name        String
-  isAdmin     Boolean
-  largeNumber BigInt
-  preferences Json
-  blob        Bytes
-  Post        Post[]
+  id              String            @id @default(uuid())
+  name            String
+  isAdmin         Boolean
+  largeNumber     BigInt
+  preferences     Json
+  blob            Bytes
+  writtenPosts    Post[]            @relation("WrittenPosts")
+  favoritePosts   Post[]            @relation("FavoritePosts")
+  // they are two field type modifiers, ? optional and [] 
+  UserPreferences UserPreferences?
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  rating    Float
-  createdAt DateTime
-  updatedAt DateTime
-  author    User     @relation(fields: [userId], references: [id])
-  userId    Int
+  id            Int        @id @default(autoincrement())
+  rating        Float
+  createdAt     DateTime
+  updatedAt     DateTime
+  author        User       @relation("WrittenPosts", fields: [authorID], references: [id])
+  //authorID is the same as ID
+  authorID      String
+  favoritedBy   User?      @relation("FavoritePosts", fields: [favoritedByID], references: [id])
+  //authorID is the same as ID
+  favoritedByID String?
+  categories    Category[]
+}
+
+model UserPreferences {
+  id           String  @id @default(uuid())
+  emailUpdates Boolean
+  user         User    @relation(fields: [userId], references: [id])
+  userId       String @unique
+  //userId must be unique because we can only have preference reference one user
 }
 
 //schema file defines your entire database, allows you to migrate your database,
 //and allows you to interact with your database
+model Category {
+  id    String @id @default(uuid())
+  posts Post[]
+}
