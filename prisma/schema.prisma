@@ -20,7 +20,7 @@ model User {
   name            String
   email           String
   age             Int
-  isAdmin         Boolean
+  role            Role             @default(BASIC)
   largeNumber     BigInt
   preferences     Json
   blob            Bytes
@@ -69,4 +69,10 @@ model Category {
   id    String @id @default(uuid())
   name  String @unique
   posts Post[]
+}
+
+enum Role {
+  BASIC
+  EDITOR
+  ADMIN
 }

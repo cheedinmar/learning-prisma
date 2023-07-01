@@ -3,8 +3,8 @@ const prisma = new PrismaClient()
 //allows you to interact with your code with prisma library, so you don't have to write raw sql
 
 async function main (){
-    const users = await prisma.user.findMany()
-    console.log(users)
+    await prisma.user.deleteMany()
+    
     // ...write prisma client queries here
 }
 main()
