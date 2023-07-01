@@ -16,23 +16,33 @@ datasource db {
 // each field in a model have 4 parts, the name and type is compulsory
 // eg email String,  optionally you can have a field modifier and you can have attributes
 model User {
-  id              String            @id @default(uuid())
+  id              String           @id @default(uuid())
   name            String
+  email           String
+  age             Int
   isAdmin         Boolean
   largeNumber     BigInt
   preferences     Json
   blob            Bytes
-  writtenPosts    Post[]            @relation("WrittenPosts")
-  favoritePosts   Post[]            @relation("FavoritePosts")
+  writtenPosts    Post[]           @relation("WrittenPosts")
+  favoritePosts   Post[]           @relation("FavoritePosts")
   // they are two field type modifiers, ? optional and [] 
   UserPreferences UserPreferences?
+
+  //we have field level attributes and block level attributes
+
+  //this is a block level attribute, uniqueness constraint on age and name
+  //two user cannot have the same age and name
+  @@unique([age, name])
+  @@index([email])
 }
 
 model Post {
   id            Int        @id @default(autoincrement())
-  rating        Float
-  createdAt     DateTime
-  updatedAt     DateTime
+  title         String
+  averageRating Float
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   author        User       @relation("WrittenPosts", fields: [authorID], references: [id])
   //authorID is the same as ID
   authorID      String
@@ -40,13 +50,16 @@ model Post {
   //authorID is the same as ID
   favoritedByID String?
   categories    Category[]
+
+  //this means instead of using a unique ID, title and authorID will represent the ID
+  //@@id ([title, authorID])
 }
 
 model UserPreferences {
   id           String  @id @default(uuid())
   emailUpdates Boolean
   user         User    @relation(fields: [userId], references: [id])
-  userId       String @unique
+  userId       String  @unique
   //userId must be unique because we can only have preference reference one user
 }
 
@@ -54,5 +67,6 @@ model UserPreferences {
 //and allows you to interact with your database
 model Category {
   id    String @id @default(uuid())
+  name  String @unique
   posts Post[]
 }
