@@ -18,7 +18,7 @@ datasource db {
 model User {
   id            String  @id @default(uuid())
   name          String
-  email         String
+  email         String  @unique
   age           Int
   role          Role    @default(BASIC)
   largeNumber   BigInt?
@@ -29,14 +29,14 @@ model User {
   // they are two field type modifiers, ? optional and [] 
 
   userPreference   UserPreferences? @relation(fields: [userPreferenceId], references: [id])
-  userPreferenceId String?        @unique
+  userPreferenceId String?          @unique
 
   //we have field level attributes and block level attributes
 
   //this is a block level attribute, uniqueness constraint on age and name
   //two user cannot have the same age and name
- // @@unique([age, name])
-  //@@index([email])
+  @@unique([age, name])
+  @@index([email])
 }
 
 model Post {
