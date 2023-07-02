@@ -47,7 +47,24 @@ async function main() {
     //finUnique to find  properties with unique attributes
     const user1 = await prisma.user.findMany({
        where:{
-            name: "Sally"
+        OR:[
+           { email:{
+                startsWith:"Sally"
+            }},{
+                email:{
+                    endsWith:"@test.com"
+                }
+            }
+        ],
+        age:{
+            lt:100
+            //less than
+        },
+        email:{
+            // contains:"@test1"
+             endsWith: "@test.com"
+        }
+            // name: { not : "Sally"}
             // email:"sally@test.com",
        } ,
        orderBy:{
